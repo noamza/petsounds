@@ -1,78 +1,4 @@
-function Gummy()
-
-%GUI = Figure + data structure
-
-gui = struct();
-
-gui.window = figure(...
-    'Position', [50,50, 800, 400],'Name', 'gui time !', ...
-    'NumberTitle', 'off','MenuBar', 'none','Toolbar', 'none');
-
-%global data
-gui.window.UserData.global = 42;
-
-tabs = uix.TabPanel( 'Parent',gui.window);
-
-gui.plotTab      = uix.Panel('Parent', tabs);
-gui.aniTab       = uix.Panel('Parent', tabs);
-gui.burritoTab   = uix.Panel('Parent', tabs);
-
-
-tabs.TabTitles = {'plot','replay','burrito'};
-
-tabs.Selection = 3; % <<<< START UP TAB                
-
-plotTab(gui.window, gui.plotTab);
-aniTab(gui.window, gui.aniTab);
-BurritoTab(gui.burritoTab, []);
-
-end
-
-function plotTab(fig, tab)
-
-tabdata = struct();
-tabdata.t = 0:0.01:(2*pi);
-tabdata.x = 1;
-
-tabHBox = uix.HBoxFlex( 'Parent', tab, 'Padding', 2, 'Spacing',3);
-controlPanel = uix.Panel('Parent', tabHBox,'Title', 'parameters');
-%,'FontSize', 11, 'TitlePosition','centerTop');
-viewPanel = uix.Panel('Parent', tabHBox,'Title', 'the view panel');
-set( tabHBox, 'Widths', [200 -1] );
-
-%% CONTROL PANEL
-controlBoxV = uix.VBox( 'Parent', controlPanel, 'Spacing', 3);
-%slider
-slider = uicontrol(  'Parent',controlBoxV,'Style', 'slider', 'Min', 1,'Max', 10, 'Value',tabdata.x,...
-    'Callback', @onSlide); %'SliderStep',[1/9 3/9],
-%run button
-runButton = uicontrol('Parent', controlBoxV,'Style', 'PushButton','String', 'Yala','Callback',@onRunButton);
-%set heights of ui elements
-set(controlBoxV,'Heights',[20,50]);
-
-
-%% CALLBACKS
-    function onSlide(src,event)
-        tabdata.x = get(src, 'Value')
-        run()
-    end
-
-    function onRunButton( ~, ~ )
-        run();
-    end % onDemoHelp
-
-    function run()
-        delete(findobj(tab,'type','axes'));
-        ax = axes('Parent',viewPanel);
-        plot(ax,tabdata.t, sin(tabdata.x*tabdata.t));
-        title(ax,sprintf('x = %.1f',tabdata.x));
-        axis(ax,'square');axis(ax,'tight');
-        
-    end
-
-end
-
-function aniTab(fig, tab);
+function [ output_args ] = BurritoTab(parent, parameters )
 tabdata = struct();
 tabdata.t0 = 0:0.01:(2*pi);
 tabdata.t = tabdata.t0;
@@ -85,7 +11,7 @@ tabdata.z = 1;
 tabdata.a = 0;
 tabdata.stop = false;
 
-tabHBox = uix.HBoxFlex( 'Parent', tab, 'Padding', 2, 'Spacing',3);
+tabHBox = uix.HBoxFlex( 'Parent', parent, 'Padding', 2, 'Spacing',3);
 controlPanel = uix.Panel('Parent', tabHBox,'Title', 'parameters');
 %,'FontSize', 11, 'TitlePosition','centerTop');
 viewPanel = uix.Panel('Parent', tabHBox,'Title', 'the view panel');
@@ -137,7 +63,7 @@ set(controlBoxV,'Heights',[t,-1,-1]);
     end % onDemoHelp
     
     function run(~,~)
-        delete(findobj(tab,'type','axes'));
+        delete(findobj(parent,'type','axes'));
         ax = axes('Parent',viewPanel);
         tabdata.stop = false;
         %title(ax,sprintf('x = %.1f',tabdata.x));
@@ -176,5 +102,5 @@ set(controlBoxV,'Heights',[t,-1,-1]);
             end
         end
     end
-
 end
+
